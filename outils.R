@@ -91,8 +91,7 @@ move_vaccinated = function(x, num_perday, vax_supply, vax_proportion, groups, v_
   dE  <- - as.matrix(E*alpha*sp) - as.matrix(E*alpha*(1-sp))
   dEv <- as.matrix(E*alpha*sp*v_e)
   dEx <- as.matrix(E*alpha*sp*(1-v_e)) + as.matrix(E*alpha*(1-sp))
-  }
-  
+
   dR <- - as.matrix(R*alpha*(1-se)) - as.matrix(R*alpha*se)
   dRv <- as.matrix(R*alpha*(1-se))
   dRx <- as.matrix(R*alpha*se)
@@ -419,4 +418,122 @@ compute_total_cases_new = function(df){
     D_index  <- D_index + 1
   }
   tot_infections <- sum(infections)/pop_total * 100
+}
+
+barplot_vax_strat = function(strategy){
+  if (strategy == "no vax"){
+    vaccinated <- rep(0,num_groups) * 100
+    this_color <- "#808080"
+    plot_title <- "No Vaccines"
+  } else {
+    if (strategy == "all"){
+      groups <- 1:9
+      this_color <- col_all
+      plot_title <- "All ages"
+    }
+    else if (strategy == "SPC1"){
+      groups <- 1
+      this_color <- col_1
+      plot_title <- "SPC1"
+    }
+    else if (strategy == "SPC2"){
+      groups <- 2
+      this_color <- col_2
+      plot_title <- "SPC2"
+    }
+    else if (strategy == "SPC3"){
+      groups <- 3
+      this_color <- col_3
+      plot_title <- "SPC3"
+    }
+    else if (strategy == "SPC4"){
+      groups <- 4
+      this_color <- col_4
+      plot_title <- "SPC4"
+    }
+    else if (strategy == "SPC5"){
+      groups <- 5
+      this_color <- col_5
+      plot_title <- "SPC5"
+    }
+    else if (strategy == "SPC6"){
+      groups <- 6
+      this_color <- col_6
+      plot_title <- "SPC6"
+    }
+    else if (strategy == "SPC7"){
+      groups <- 7
+      this_color <- col_7
+      plot_title <- "SPC7"
+    }
+    else if (strategy == "SPC8"){
+      groups <- 8
+      this_color <- col_8
+      plot_title <- "SPC8"
+    }
+    else if (strategy == "SPC9"){
+      groups <- 9
+      this_color <- col_9
+      plot_title <- "SPC9"
+    }
+    people_to_vax <- sum(N_i[groups])
+    
+    vax_proportion <- rep(0, num_groups)
+    vax_proportion[groups] <- N_i[groups]/people_to_vax
+  }
+  spc_groups <- c("1","2", "3", "4", "5", "6", "7", "8", "9")
+  vax_proportion <- vax_proportion*100
+  
+  df <- data.frame(age_groups, vax_proportion, age_demo)
+  
+  # plot
+  p <- ggplot(df, aes(x=spc_groups)) + 
+    geom_bar(aes(y=vax_proportion), position="stack", stat="identity", fill = this_color) + 
+    xlab("SPC") +
+    ggtitle(plot_title) +
+    scale_y_continuous(expand = c(0,0), limit = c(0, 52), breaks = c(0, 25, 50), labels = c(0, "", 50))
+  
+  if (strategy == "all"){
+    p <- p + scale_x_continuous(limits = c(-5, NA), expand = c(0,0),
+                                breaks=seq(-5, 75, by = 10),
+                                labels=c("1","2", "3", "4", "5", "6", "7", "8", "9")) +
+      theme(plot.title = element_text(color = this_color, size = 10),#, face = "bold"),
+            axis.title.x = element_blank(),
+            axis.text.x = element_text(size = 9))
+  } else {
+    p <- p + theme(plot.title = element_text(color = this_color,  size = 10),
+                   axis.title.x =element_blank(),
+                   axis.text.x = element_blank(),
+                   axis.title.y = element_blank()) +
+      scale_x_continuous(limits = c(-5, NA), expand = c(0,0),
+                         breaks=seq(-5, 75, by = 10),
+                         labels=c("", "", "", "", "", "", "", "", ""))
+  }
+  p <- p + theme(panel.grid.minor = element_blank(),
+                 panel.grid.major = element_blank(),
+                 axis.ticks = element_line(size = 0.35),
+                 axis.line = element_line(size = 0.35),
+                 plot.title = element_text(vjust = -1),
+                 plot.margin = unit(c(-0.06,0,0,0), "cm"))
+  return(p)
+}
+
+when_strat_switch = function(list_df, groups){
+  # find the vaccine supply where you switch from strategy to vaccinating everyone else
+  # input: list_df is a list with df for a strategy for vax supply 0-50
+  #        groups: vector index of the strategy
+  # output: vax supply where switch occurs
+  
+  other_groups <- 1:9
+  other_groups <- other_groups[!other_groups %in% groups]
+  x_switch <- -1
+  
+  for (i in 1:length(list_df)){
+    temp <- list_df[[i]]
+    if (any(temp[dim(temp)[1], other_groups + 10] > 0)){
+      x_switch <- i-1 
+      break
+    }
+  }
+  return(x_switch)
 }

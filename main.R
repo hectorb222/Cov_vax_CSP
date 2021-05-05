@@ -5,6 +5,8 @@ setwd("~/Desktop/Cov_vax_CSP")
 library(deSolve)
 library(doParallel)
 library(ggplot2)
+library(ggpubr)
+
 
 source("sim.R")
 source("outils.R")
@@ -12,6 +14,18 @@ source("outils.R")
 #######################################################################################################
 # GRAPH THEMES #
 ################
+
+# ColorBrewer Dark2
+col_1 = "#1B9E77" # teal green
+col_all = "#D95F02" # orange
+col_2 = "#7570B3" # purple 
+col_3 = "#E7298A" # magenta
+col_4 = "#66A61E" # light green 
+col_5 = "#1B9E76"
+col_6 = "#D95F01" 
+col_7 = "#7570B8"
+col_8 = "#E7298A" 
+col_9 = "#61A61E" 
 
 nolabels_theme <- theme(axis.title.x =element_blank(),
                         axis.text.x = element_blank(),
@@ -133,24 +147,24 @@ panel <- ggarrange(mort_1, mort_2, mort_3, infect_1, infect_2, infect_3,
                                      vjust = 0.3, hjust = 0.36),
                    padding = unit(0.5, "line"))
 
-p1 <- barplot_vax_strat("SCP1") + 
+p1 <- barplot_vax_strat("SPC1") + 
   theme(axis.title.y = element_blank())
 #ylab("Distribution\nof vaccines (%)")
-p2 <- barplot_vax_strat("SCP2") + 
+p2 <- barplot_vax_strat("SPC2") + 
   theme(axis.title.y = element_blank())
-p3 <- barplot_vax_strat("SCP3") + 
+p3 <- barplot_vax_strat("SPC3") + 
   theme(axis.title.y = element_blank())
-p4 <- barplot_vax_strat("SCP4") + 
+p4 <- barplot_vax_strat("SPC4") + 
   theme(axis.title.y = element_blank())
-p5 <- barplot_vax_strat("SCP5") + 
+p5 <- barplot_vax_strat("SPC5") + 
   theme(axis.title.y = element_blank())
-p6 <- barplot_vax_strat("SCP6") + 
+p6 <- barplot_vax_strat("SPC6") + 
   theme(axis.title.y = element_blank())
-p7 <- barplot_vax_strat("SCP7") + 
+p7 <- barplot_vax_strat("SPC7") + 
   theme(axis.title.y = element_blank())
-p8 <- barplot_vax_strat("SCP8") + 
+p8 <- barplot_vax_strat("SPC8") + 
   theme(axis.title.y = element_blank())
-p9 <- barplot_vax_strat("SCP9") + 
+p9 <- barplot_vax_strat("SPC9") + 
   theme(axis.title.y = element_blank())
 p_all <- barplot_vax_strat("all") + 
   theme(axis.title.y = element_blank())
