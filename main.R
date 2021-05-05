@@ -1,11 +1,13 @@
 # Vaccination strategy
 
-setwd("~/Desktop/vaccine_MLC")
-source("run_sim.R")
-source("outils.R")
+setwd("~/Desktop/Cov_vax_CSP")
 
 library(deSolve)
 library(doParallel)
+library(ggplot2)
+
+source("sim.R")
+source("outils.R")
 
 #######################################################################################################
 # GRAPH THEMES #
@@ -31,22 +33,19 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 # PARAMETERS #
 ##############
 
-country <- 'FRA' # Choose country to study
+C <- read.csv(file = "C_FRA.csv") # Counting matrix
 
-C <- read.csv(file = paste0('C_'+country+'.csv')) # Counting matrix
-
-spc_demo <- read.csv(file = paste0('SPC'+country+'.csv')) # Vector containing the size of all the different SCP categories (% of pop) and total population
-
-pop_total <- spc_demo[10] # Country population (initial)
-spc_demo <- spc_demo[1:9] # Vector containing the size of all the different SCP categories (% of pop)
+pop_total <- 66000000 # Country population (initial)
+spc_demo <- c(0.005, 0.027, 0.083, 0.107, 0.105, 0.078, 0.1, 0.1, 0.1) # Vector containing the size of all the different SCP categories (% of pop)
 
 N_i <- pop_total*spc_demo # Vector containing the population per SCP categories
 num_groups <- length(spc_demo) # Number of SCPs chosen
 
-IFR <- c() # IFR per CSP
+IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01, 
+         4.042049e-01, 1.355495e-01, 4.545632e+00, 1.524371e-2) # IFR per CSP
 IFR <- IFR/100 # en %
 
-u_var <- c() # Susceptibility per CSP
+u_var <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
 R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.9 # Vaccine efficacy
@@ -64,6 +63,15 @@ registerDoParallel(cl)
 # Different SCP categories
 list_all <- list_spc1 <- list_spc2 <- list_spc3 <- list_spc4 <- list_spc5 <- list_spc6 <- list_spc7 <- list_spc8 <- list_spc9 <- vector(mode = "list")
 list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_var <- list_6_var <- list_7_var <- list_8_var <- list_9_var <- vector(mode = "list")
+# SPC1: "Agriculteurs exploitants"
+# SPC2: "Artisans, commerçants, chefs d'entreprise"
+# SPC3: "Cadres et professions intellectuelles supérieures"
+# SPC4: "Professions intermédiaires"
+# SPC5: "Employés"
+# SPC6: "Ouvriers"
+# SPC7: "Sans Emploi"
+# SPC8: "Retraités"
+# SPC9: "Etudiants"
 
 # Vaccine rollout speed
 num_per_day <- 1
@@ -147,7 +155,7 @@ p9 <- barplot_vax_strat("SCP9") +
 p_all <- barplot_vax_strat("all") + 
   theme(axis.title.y = element_blank())
 
-strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all
+strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
                             nrow = 5, 
                             labels = c('A',  '', '', '', ''),
                             label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),

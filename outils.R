@@ -145,10 +145,6 @@ calculate_derivatives_new=function(t, x, parameters){
   Rx[Rx < .Machine$double.eps] <- 0
   D[D < .Machine$double.eps] <- 0
   
-  # I[I<0] = 0
-  # Iv[Iv<0] = 0
-  # Ix[Ix<0] = 0
-  
   u <- parameters$u
   C <- parameters$C
   d_E <- parameters$d_E
@@ -184,55 +180,47 @@ calculate_derivatives_new=function(t, x, parameters){
   list(out)
 }
 
-plot_over_vax_avail_new = function(outcome, var_name, list_all_var, list_kids_var, list_adults_var, list_elderly_var, list_twentyplus_var){
+plot_over_vax_avail_new = function(outcome, var_name, list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9){
   library(ggplot2)
   theme_set(theme_minimal(base_size = 12))
   
-  x_adults_switch     <- when_strat_switch(list_adults, 3:5)
-  x_kids_switch       <- when_strat_switch(list_kids, 1:2)
-  x_elderly_switch    <- when_strat_switch(list_elderly, 7:9)
-  x_twentyplus_switch <- when_strat_switch(list_twentyplus, 3:9)
+  x_spc1_switch        <- when_strat_switch(list_spc1,1)
+  x_spc2_switch        <- when_strat_switch(list_spc2,2)
+  x_spc3_switch        <- when_strat_switch(list_spc3,3)
+  x_spc4_switch        <- when_strat_switch(list_spc4,4)
+  x_spc5_switch        <- when_strat_switch(list_spc5,5)
+  x_spc6_switch        <- when_strat_switch(list_spc6,6)
+  x_spc7_switch        <- when_strat_switch(list_spc7,7)
+  x_spc8_switch        <- when_strat_switch(list_spc8,8)
+  x_spc9_switch        <- when_strat_switch(list_spc9,9)
   
-  x_adults_switch_var     <- when_strat_switch(list_adults_var, 3:5)
-  x_kids_switch_var       <- when_strat_switch(list_kids_var, 1:2)
-  x_elderly_switch_var    <- when_strat_switch(list_elderly_var, 7:9)
-  x_twentyplus_switch_var <- when_strat_switch(list_twentyplus_var, 3:9)
-  
+
   # get dataframe for specific outcome
   if (outcome == "cases"){
-    df <- get_reduction_in_cases_df_new(list_all_var, list_kids_var, list_adults_var, list_elderly_var, 
-                                        list_twentyplus_var)
-    # df <- rbind(df, optimal_df_cases)
+    df <- get_reduction_in_cases_df_new(list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9)
   } else if (outcome == "deaths"){
-    df <- get_reduction_in_deaths_df_new(list_all_var, list_kids_var, list_adults_var, list_elderly_var, 
-                                         list_twentyplus_var)
-    # df <- rbind(df, optimal_df_deaths)
+    df <- get_reduction_in_deaths_df_new(list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9)
   } 
   
   # reallocate to everyone after age groups are completely vaccinated according to the strat
-  points_x <- c(x_kids_switch, x_elderly_switch, x_adults_switch)
-  points_x_var <- c(x_kids_switch_var, x_elderly_switch_var, x_adults_switch_var)
+  points_x <- c(x_spc1_switch, x_spc2_switch, x_spc3_switch, x_spc4_switch, x_spc5_switch, x_spc6_switch, x_spc7_switch, x_spc8_switch, x_spc9_switch)
   
-  points_y <- c(df[df$strat == "kids" & df$vax_avail == x_kids_switch & df$variable == "constant", ]$reduction,
-                df[df$strat == "elderly" & df$vax_avail == x_elderly_switch & df$variable == "constant", ]$reduction,
-                df[df$strat == "adults" & df$vax_avail == x_adults_switch & df$variable == "constant", ]$reduction)
-  points_y_var <- c(df[df$strat == "kids" & df$vax_avail == x_kids_switch_var & df$variable == "var", ]$reduction,
-                    df[df$strat == "elderly" & df$vax_avail == x_elderly_switch_var & df$variable == "var", ]$reduction,
-                    df[df$strat == "adults" & df$vax_avail == x_adults_switch_var & df$variable == "var", ]$reduction)
-  
-  if (x_twentyplus_switch > 0){
-    points_x <- c(points_x, x_twentyplus_switch)
-    points_y <- c(points_y, df[df$strat == "twentyplus" & df$vax_avail == x_twentyplus_switch & df$variable == "constant", ]$reduction)
-    points_y_var <- c(points_y_var, df[df$strat == "twentyplus" & df$vax_avail == x_twentyplus_switch & df$variable == "var", ]$reduction)
-  }
+  points_y <- c(df[df$strat == "SPC1" & df$vax_avail == x_spc1_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC2" & df$vax_avail == x_spc2_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC3" & df$vax_avail == x_spc3_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC4" & df$vax_avail == x_spc4_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC5" & df$vax_avail == x_spc5_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC6" & df$vax_avail == x_spc6_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC7" & df$vax_avail == x_spc7_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC8" & df$vax_avail == x_spc8_switch & df$variable == "constant", ]$reduction,
+                df[df$strat == "SPC9" & df$vax_avail == x_spc9_switch & df$variable == "constant", ]$reduction)
+
   
   # plot
   # for fig 2
   df_var <- df[df$variable == "var", ]
   df_const <- df[df$variable == "constant", ]
   p <- ggplot() +
-    # geom_line(aes(x = df_var$vax_avail, y = df_var$reduction, col = df_var$strat), 
-    #          linetype = "dashed", size = 1, alpha = 0.9) +
     geom_line(aes(x = df_const$vax_avail, y = df_const$reduction, col = df_const$strat), 
               linetype = "solid", size = 1, alpha = 0.9) +
     geom_line(aes(x = df_var[df_var$strat == "optimal",]$vax_avail, 
@@ -241,8 +229,9 @@ plot_over_vax_avail_new = function(outcome, var_name, list_all_var, list_kids_va
               linetype = "solid", size = 1, alpha = 0.9) +
     xlab("Total vaccine supply (% of population)") +
     scale_color_brewer(palette = "Dark2", name = "Allocation Strategy",
-                       labels =  c("Adults 20-49", "All Ages", "Adults 60+", 
-                                   "Under 20", "Adults 20+")) +
+                       labels =  c("All", "SPC1", "SPC2",  
+                                   "SPC3", "SPC4", "SPC5", "SPC6", 
+                                   "SPC7", "SPC8", "SPC9")) +
     scale_linetype_discrete(name = df$var_name,
                             labels = c("Constant", "Age-dependent")) +
     scale_y_continuous(expand = c(0,0), limit = c(0, 100)) +
@@ -260,7 +249,7 @@ plot_over_vax_avail_new = function(outcome, var_name, list_all_var, list_kids_va
   return(p)
 }
 
-get_reduction_in_cases_df_new = function(list_all_var, list_kids_var, list_adults_var, list_elderly_var, list_twentyplus_var){
+get_reduction_in_cases_df_new = function(list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9){
   total_cases <- rep(NA, 510)
   
   count <- 1
@@ -268,23 +257,23 @@ get_reduction_in_cases_df_new = function(list_all_var, list_kids_var, list_adult
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_all_var){
+  for (i in list_spc1){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_kids){
+  for (i in list_spc2){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_kids_var){
+  for (i in list_spc3){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_adults){
+  for (i in list_spc4){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_adults_var){
+  for (i in list_spc5){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
@@ -292,25 +281,31 @@ get_reduction_in_cases_df_new = function(list_all_var, list_kids_var, list_adult
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_elderly_var){
+  for (i in list_spc6){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_twentyplus){
+  for (i in list_spc7){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_twentyplus_var){
+  for (i in list_spc8){
+    total_cases[count] <- compute_total_cases_new(i)
+    count <- count + 1
+  }
+  for (i in list_spc9){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
   
-  num_strategies <- 5
+  num_strategies <- 10
   vax_avail <- c(rep(seq(0, 50, by = 1), num_strategies*2))
   num_per_list <- 51
-  strat <- c(rep("all", num_per_list*2), rep("kids", num_per_list*2), 
-             rep("adults", num_per_list*2), rep("elderly", num_per_list*2), 
-             rep("twentyplus", num_per_list*2))
+  strat <- c(rep("all", num_per_list*2), rep("SPC1", num_per_list*2), 
+             rep("SPC2", num_per_list*2), rep("SPC3", num_per_list*2), 
+             rep("SPC4", num_per_list*2), rep("SPC5", num_per_list*2),
+             rep("SPC6", num_per_list*2), rep("SPC7", num_per_list*2),
+             rep("SPC8", num_per_list*2), rep("SPC9", num_per_list*2))
   temp <-  c(rep("constant", num_per_list), rep("var", num_per_list))
   variable <- c(rep(temp, num_strategies))
   
@@ -325,7 +320,7 @@ get_reduction_in_cases_df_new = function(list_all_var, list_kids_var, list_adult
   df <- data.frame(vax_avail, strat, reduction, variable)
 }
 
-get_reduction_in_deaths_df_new = function(list_all_var, list_kids_var, list_adults_var, list_elderly_var, list_twentyplus_var){
+get_reduction_in_deaths_df_new = function(list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9){
   total_deaths <- rep(NA, 510)
   
   count <- 1
@@ -333,49 +328,51 @@ get_reduction_in_deaths_df_new = function(list_all_var, list_kids_var, list_adul
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_all_var){
+  for (i in list_spc1){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_kids){
+  for (i in list_spc2){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_kids_var){
+  for (i in list_spc3){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_adults){
+  for (i in list_spc4){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_adults_var){
+  for (i in list_spc5){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_elderly){
+  for (i in list_spc6){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_elderly_var){
+  for (i in list_spc7){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_twentyplus){
+  for (i in list_spc8){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
-  for (i in list_twentyplus_var){
+  for (i in list_spc9){
     total_deaths[count] <- compute_total_deaths_new(i)
     count <- count + 1
   }
   
-  num_strategies <- 5
+  num_strategies <- 10
   vax_avail <- c(rep(seq(0, 50, by = 1), num_strategies*2))
   num_per_list <- 51
-  strat <- c(rep("all", num_per_list*2), rep("kids", num_per_list*2), 
-             rep("adults", num_per_list*2), rep("elderly", num_per_list*2), 
-             rep("twentyplus", num_per_list*2))
+  strat <- c(rep("all", num_per_list*2), rep("SPC1", num_per_list*2), 
+             rep("SPC2", num_per_list*2), rep("SPC3", num_per_list*2), 
+             rep("SPC4", num_per_list*2), rep("SPC5", num_per_list*2),
+             rep("SPC6", num_per_list*2), rep("SPC7", num_per_list*2),
+             rep("SPC8", num_per_list*2), rep("SPC9", num_per_list*2))
   temp <-  c(rep("constant", num_per_list), rep("var", num_per_list))
   variable <- c(rep(temp, num_strategies))
   
@@ -387,7 +384,6 @@ get_reduction_in_deaths_df_new = function(list_all_var, list_kids_var, list_adul
   
   reduction <- (1 - (total_deaths/baseline_deaths))*100
   
-  # df <- data.frame(vax_avail, strat, total_deaths, reduction, variable)
   df <- data.frame(vax_avail, strat, reduction, variable)
 }
 

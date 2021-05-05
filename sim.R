@@ -5,6 +5,8 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e = v_e_constant,
   # New IC: start w/ 0.5% of each age group in I
   # Only run sim for 365 days post start of rollout
   # Vaccine rollout is continuous at 1% of total pop/day until all vaccines are distributed
+  # The incorporation of a serological test can be included by using known sensitivity se and specificity sp,
+  #  or can be excluded by setting se = 0 and sp = 1 (a convenient mathematical representation of the no-test scenario is simply a test that always returns a negative result)
   
   # Disease Tranmission
   d_E <- 1/3 # incubation period (E -> I), ref: Davies
