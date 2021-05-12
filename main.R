@@ -60,7 +60,7 @@ IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01,
 IFR <- IFR/100 # en %
 
 u_var <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
-R0 <- compute_R0(u_var, C) # Computing of R0
+#R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.9 # Vaccine efficacy
 

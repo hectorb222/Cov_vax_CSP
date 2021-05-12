@@ -1,13 +1,11 @@
 # Simulation
 
-run_sim = function(C, percent_vax, strategy, num_perday, v_e = v_e_constant,
-                       u = u_var, sp = 1, se = 0, syn_sero_compartments = NA){
+run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, syn_sero_compartments = NA){
   # New IC: start w/ 0.5% of each age group in I
   # Only run sim for 365 days post start of rollout
   # Vaccine rollout is continuous at 1% of total pop/day until all vaccines are distributed
   # The incorporation of a serological test can be included by using known sensitivity se and specificity sp,
   #  or can be excluded by setting se = 0 and sp = 1 (a convenient mathematical representation of the no-test scenario is simply a test that always returns a negative result)
-  
   # Disease Tranmission
   d_E <- 1/3 # incubation period (E -> I), ref: Davies
   d_I <- 1/5 # recovery period (I -> R), ref: Davies
@@ -60,7 +58,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e = v_e_constant,
     E <- E_0
     R <- R_0
     vax_eligible <- (S+E)*sp + R*(1-se) # Number of people eligible for vaccines per category
-    
+
     if (any(vax_distribution > vax_eligible)){ # If there some categories where vaccines are available and the category isn't fully vaccinated
       # make sure everyone in the specificed age groups are vaccinated
       if (!all(vax_distribution[groups] > vax_eligible[groups])){ # If not all the people in the prioritized categories are not vaccinated
