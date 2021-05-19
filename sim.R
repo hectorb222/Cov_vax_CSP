@@ -11,7 +11,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   d_I <- 1/5 # recovery period (I -> R), ref: Davies
   
   E_0 <- Ev_0 <- Ex_0 <- Sv_0 <- Sx_0 <- Iv_0 <- Ix_0 <- Rv_0 <- Rx_0 <- D_0 <- rep(0, num_groups)
-  R_0 <- 0
+  R_0 <- rep(0, num_groups)
   
   if (num_perday == 1){
     I_0 <- rep(1, num_groups)
@@ -20,6 +20,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   }
   
   S_0 <- N_i - I_0 - R_0
+
   
   # specify group to vaccinate according to allocation strategy
   if (strategy == "all"){ 
@@ -44,12 +45,12 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
     groups <- 9
   }
   people_to_vax <- sum(S_0[groups] + E_0[groups] + R_0[groups])
-  
+
   vax_proportion <- rep(0, num_groups)
   vax_proportion[groups] <- (S_0[groups] + E_0[groups] + R_0[groups])/people_to_vax # Proportion of people to vaccinate by category
-  
+
   vax_supply <- percent_vax*pop_total # Number of vaccines available
-  
+
   # anticipatory rollout IC - vaccinate people at t=0
   if (num_perday == 1){
     nvax <- vax_supply
@@ -114,17 +115,16 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
  # if (length(syn_sero_compartments) > 1){
  #    compartments_initial <- syn_sero_compartments
  # }
-  print(vax_supply)
-  print(vax_proportion)
   compartments_aftervax <- move_vaccinated(compartments_initial, num_perday, vax_supply, vax_proportion,
                                            groups, v_e, 1, 0)
-  
+
   parameters = list(u=u, C=C, d_E=d_E, d_I=d_I, v_e=v_e)
   
   running = TRUE
   t <- c(0:1)
   df <- as.data.frame(deSolve::lsoda(compartments_aftervax, t, calculate_derivatives_new, parameters))
   df[1,] <- c(0, compartments_initial)
+
   
   t <- t + 1
   
@@ -142,7 +142,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
     temp <- temp[-(1),]
     
     df <- rbind(df, temp)
-    
+
     vax_supply <- vax_supply - num_perday*pop_total
     vax_supply[vax_supply < 0] <- 0
     

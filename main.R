@@ -47,7 +47,7 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 # PARAMETERS #
 ##############
 
-C <- read.csv(file = "C_FRA.csv") # Counting matrix
+C <- as.matrix(read.csv(file = "C_FRA.csv")) # Counting matrix
 
 pop_total <- 66000000 # Country population (initial)
 spc_demo <- c(0.005, 0.027, 0.083, 0.107, 0.105, 0.078, 0.1, 0.1, 0.1) # Vector containing the size of all the different SCP categories (% of pop)
@@ -59,8 +59,8 @@ IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01,
          4.042049e-01, 1.355495e-01, 4.545632e+00, 1.524371e-2) # IFR per CSP
 IFR <- IFR/100 # en %
 
-u_var <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
-#R0 <- compute_R0(u_var, C) # Computing of R0
+u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
+R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.9 # Vaccine efficacy
 
@@ -88,21 +88,21 @@ list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_v
 # SPC9: "Etudiants"
 
 # Vaccine rollout speed
-num_per_day <- 100
+num_per_day <- 10
 
 # Simulation   per SCP
-for (i in seq(0, 50, by = 1)){
+for (i in seq(0, 5, by = 1)){
   j <- i/100
   list_all[[paste0(i)]] <- run_sim(C, j, "all", num_per_day, v_e)
-  list_scp1[[paste0(i)]] <- run_sim(C, j, "SPC1", num_per_day, v_e)
-  list_scp2[[paste0(i)]] <- run_sim(C, j, "SPC2", num_per_day, v_e)
-  list_scp3[[paste0(i)]] <- run_sim(C, j, "SPC3", num_per_day, v_e)
-  list_scp4[[paste0(i)]] <- run_sim(C, j, "SPC4", num_per_day, v_e)
-  list_scp5[[paste0(i)]] <- run_sim(C, j, "SPC5", num_per_day, v_e)
-  list_scp6[[paste0(i)]] <- run_sim(C, j, "SPC6", num_per_day, v_e)
-  list_scp7[[paste0(i)]] <- run_sim(C, j, "SPC7", num_per_day, v_e)
-  list_scp8[[paste0(i)]] <- run_sim(C, j, "SPC8", num_per_day, v_e)
-  list_scp9[[paste0(i)]] <- run_sim(C, j, "SPC9", num_per_day, v_e)
+  list_spc1[[paste0(i)]] <- run_sim(C, j, "SPC1", num_per_day, v_e)
+  list_spc2[[paste0(i)]] <- run_sim(C, j, "SPC2", num_per_day, v_e)
+  list_spc3[[paste0(i)]] <- run_sim(C, j, "SPC3", num_per_day, v_e)
+  list_spc4[[paste0(i)]] <- run_sim(C, j, "SPC4", num_per_day, v_e)
+  list_spc5[[paste0(i)]] <- run_sim(C, j, "SPC5", num_per_day, v_e)
+  list_spc6[[paste0(i)]] <- run_sim(C, j, "SPC6", num_per_day, v_e)
+  list_spc7[[paste0(i)]] <- run_sim(C, j, "SPC7", num_per_day, v_e)
+  list_spc8[[paste0(i)]] <- run_sim(C, j, "SPC8", num_per_day, v_e)
+  list_spc9[[paste0(i)]] <- run_sim(C, j, "SPC9", num_per_day, v_e)
 }
 
 #####################################################################################################

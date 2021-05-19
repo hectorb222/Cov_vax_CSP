@@ -201,7 +201,7 @@ plot_over_vax_avail_new = function(outcome, var_name, list_all, list_spc1, list_
     df <- get_reduction_in_deaths_df_new(list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9)
   } 
   
-  # reallocate to everyone after age groups are completely vaccinated according to the strat
+  # reallocate to everyone after groups are completely vaccinated according to the strat
   points_x <- c(x_spc1_switch, x_spc2_switch, x_spc3_switch, x_spc4_switch, x_spc5_switch, x_spc6_switch, x_spc7_switch, x_spc8_switch, x_spc9_switch)
   
   points_y <- c(df[df$strat == "SPC1" & df$vax_avail == x_spc1_switch & df$variable == "constant", ]$reduction,
@@ -389,12 +389,12 @@ get_reduction_in_deaths_df_new = function(list_all, list_spc1, list_spc2, list_s
 compute_total_deaths_new = function(df){
   deaths <- rep(0,num_groups)
   D_index <- 110
-  
+  print(dim(df))
   for (i in 1:num_groups) {
+    print(df[dim(df)[1], D_index])
     deaths[i] <- df[dim(df)[1], D_index]
     D_index <- D_index + 1
   }
-  
   tot_deaths <- sum(deaths)/pop_total * 100
 }
 
