@@ -88,7 +88,7 @@ list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_v
 # SPC9: "Etudiants"
 
 # Vaccine rollout speed
-num_per_day <- 1
+num_per_day <- 100
 
 # Simulation   per SCP
 for (i in seq(0, 50, by = 1)){

@@ -114,9 +114,10 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
  # if (length(syn_sero_compartments) > 1){
  #    compartments_initial <- syn_sero_compartments
  # }
-  
+  print(vax_supply)
+  print(vax_proportion)
   compartments_aftervax <- move_vaccinated(compartments_initial, num_perday, vax_supply, vax_proportion,
-                                           groups, v_e, v_e_type, sp, se)
+                                           groups, v_e, 1, 0)
   
   parameters = list(u=u, C=C, d_E=d_E, d_I=d_I, v_e=v_e)
   
@@ -133,8 +134,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   while(running == TRUE){
     compartments_initial <- as.numeric(df[t[2], -(1)])
     
-    compartments_aftervax <- move_vaccinated(compartments_initial, num_perday, vax_supply, vax_proportion,
-                                             groups, v_e, sp, se)
+    compartments_aftervax <- move_vaccinated(compartments_initial, num_perday, vax_supply, vax_proportion, groups, v_e, 1, 0)
     
     parameters = list(u=u, C=C, d_E=d_E, d_I=d_I, v_e=v_e)
     temp <- as.data.frame(deSolve::lsoda(compartments_aftervax, t, calculate_derivatives_new, parameters))
