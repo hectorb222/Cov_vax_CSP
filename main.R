@@ -93,20 +93,32 @@ list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_v
 num_per_day <- 10
 
 # Simulation   per SCP
-for (i in seq(0, 5, by = 1)){
+for (i in seq(0, 2, by = 1)){
   j <- i/100
+  print(paste0("SIM ",i,"% of vaccines"))
   list_all[[paste0(i)]] <- run_sim(C, j, "all", num_per_day, v_e)
+  print("SIM STRAT ALL")
   list_spc1[[paste0(i)]] <- run_sim(C, j, "SPC1", num_per_day, v_e)
+  print("SIM STRAT 1")
   list_spc2[[paste0(i)]] <- run_sim(C, j, "SPC2", num_per_day, v_e)
+  print("SIM STRAT 2")
   list_spc3[[paste0(i)]] <- run_sim(C, j, "SPC3", num_per_day, v_e)
+  print("SIM STRAT 3")
   list_spc4[[paste0(i)]] <- run_sim(C, j, "SPC4", num_per_day, v_e)
+  print("SIM STRAT 4")
   list_spc5[[paste0(i)]] <- run_sim(C, j, "SPC5", num_per_day, v_e)
+  print("SIM STRAT 5")
   list_spc6[[paste0(i)]] <- run_sim(C, j, "SPC6", num_per_day, v_e)
+  print("SIM STRAT 6")
   list_spc7[[paste0(i)]] <- run_sim(C, j, "SPC7", num_per_day, v_e)
+  print("SIM STRAT 7")
   list_spc8[[paste0(i)]] <- run_sim(C, j, "SPC8", num_per_day, v_e)
+  print("SIM STRAT 8")
   list_spc9[[paste0(i)]] <- run_sim(C, j, "SPC9", num_per_day, v_e)
+  print("SIM STRAT 9")
 }
 
+print("SIM DONE")
 #####################################################################################################
 # STAT PANEL DISPLAY #
 ######################
@@ -115,7 +127,9 @@ for (i in seq(0, 5, by = 1)){
 # Plotting of death and cases graphs
 p_mort <- plot_over_vax_avail_new("deaths", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
 p_infect <- plot_over_vax_avail_new("cases", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
-  
+
+print("DEATHS AND CASES PLOTED")
+
 fig1_plots <- list(p_mort, p_infect)
 
 stopCluster(cl) # End of parallel computing 
@@ -135,6 +149,7 @@ infect_2 <- fig1_plots[[2]][[2]] +
   theme(axis.title.x = element_blank())
 
 # Panel config
+print("SETTING UP PANEL...")
 panel <- ggarrange(mort_1, mort_2, infect_1, infect_2,
                    nrow = 2,
                    labels = c('B', 'C', 'D', 'E'),
@@ -144,6 +159,7 @@ panel <- ggarrange(mort_1, mort_2, infect_1, infect_2,
                                      vjust = 0.3, hjust = 0.36),
                    padding = unit(0.5, "line"))
 
+print("CREATING BAR PLOT...")
 p1 <- barplot_vax_strat("SPC1") + 
   theme(axis.title.y = element_blank())
 #ylab("Distribution\nof vaccines (%)")
@@ -166,7 +182,9 @@ p9 <- barplot_vax_strat("SPC9") +
 p_all <- barplot_vax_strat("all") + 
   theme(axis.title.y = element_blank())
 
-strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
+plot_list <- c(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all)
+
+strategy_panel <- ggarrange(plotlist = plot_list,
                             nrow = 5, 
                             labels = c('A',  '', '', '', ''),
                             label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
@@ -177,5 +195,7 @@ strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
 grid.arrange(strategy_panel, panel,
              ncol = 2, widths = c(2, 7.5),
              padding = unit(1, "line"))
+
+print("DONE!")
 
 

@@ -385,10 +385,9 @@ get_reduction_in_deaths_df_new = function(list_all, list_spc1, list_spc2, list_s
 compute_total_deaths_new = function(df){
   deaths <- rep(0,num_groups)
   D_index <- 110
-  print(dim(df))
+
   for (i in 1:num_groups) {
     if (is.null(df[dim(df)[1], D_index])){
-      print(i)
     }
     else {
       deaths[i] <- df[dim(df)[1], D_index]
@@ -409,7 +408,6 @@ compute_total_cases_new = function(df){
   for (i in 1:num_groups) {
     # infections = total # recovered - initial recovered (seropositive)
     if (is.null(df[dim(df)[1], R_index]) || is.null(df[1, R_index]) || is.null(df[dim(df)[1], Rv_index]) || is.null(df[1, Rv_index]) || is.null(df[dim(df)[1], Rx_index]) || is.null(df[1, Rx_index]) || is.null(df[dim(df)[1], D_index])){
-      print(c(df[dim(df)[1], R_index], df[1, R_index], df[dim(df)[1], Rv_index], df[1, Rv_index],df[dim(df)[1], Rx_index], df[1, Rx_index],df[dim(df)[1], D_index]))
     }
     else {
       infections[i] <- df[dim(df)[1], R_index] - df[1, R_index] +
@@ -486,10 +484,10 @@ barplot_vax_strat = function(strategy){
     vax_proportion <- rep(0, num_groups)
     vax_proportion[groups] <- N_i[groups]/people_to_vax
   }
-  spc_groups <- c("1","2", "3", "4", "5", "6", "7", "8", "9")
+  spc_groups <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
   vax_proportion <- vax_proportion*100
   
-  df <- data.frame(groups, vax_proportion, spc_demo)
+  df <- data.frame(spc_groups, vax_proportion, spc_demo)
   
   # plot
   p <- ggplot(df, aes(x=spc_groups)) + 
@@ -520,6 +518,7 @@ barplot_vax_strat = function(strategy){
                  axis.line = element_line(size = 0.35),
                  plot.title = element_text(vjust = -1),
                  plot.margin = unit(c(-0.06,0,0,0), "cm"))
+  
   return(p)
 }
 
