@@ -6,6 +6,7 @@ library(deSolve)
 library(doParallel)
 library(ggplot2)
 library(ggpubr)
+library(grid)
 
 
 source("sim.R")
@@ -70,6 +71,7 @@ v_e <-  0.9 # Vaccine efficacy
 ##############
 
 # Parallel core use to not overload computer
+ptm <- proc.time()
 cores=detectCores()
 cl <- makeCluster(cores[1]-1)
 registerDoParallel(cl)
@@ -125,22 +127,17 @@ mort_1 <- fig1_plots[[1]][[1]] +
   theme(plot.margin=unit(c(0.25,0.25,0.25,0.25), "cm"))
 mort_2 <- fig1_plots[[2]][[1]] + 
   nolabels_theme
-mort_3 <- fig1_plots[[3]][[1]] + 
-  nolabels_theme
 
 infect_1 <- fig1_plots[[1]][[2]]  + 
   theme(axis.title.x = element_blank())
 infect_2 <- fig1_plots[[2]][[2]] + 
   onlyx_theme + 
   theme(axis.title.x = element_blank())
-infect_3 <- fig1_plots[[3]][[2]] +
-  onlyx_theme  + 
-  theme(axis.title.x = element_blank())
 
 # Panel config
-panel <- ggarrange(mort_1, mort_2, mort_3, infect_1, infect_2, infect_3,
+panel <- ggarrange(mort_1, mort_2, infect_1, infect_2,
                    nrow = 2,
-                   labels = c('B', 'C', 'D', 'E', 'F', 'G'),
+                   labels = c('B', 'C', 'D', 'E'),
                    label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
                                      hjust=0, vjust = 1.1),
                    bottom = textGrob("Total vaccine supply (% of population)", gp = gpar(fontsize = 12), 

@@ -276,10 +276,6 @@ get_reduction_in_cases_df_new = function(list_all, list_spc1, list_spc2, list_sp
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
   }
-  for (i in list_elderly){
-    total_cases[count] <- compute_total_cases_new(i)
-    count <- count + 1
-  }
   for (i in list_spc6){
     total_cases[count] <- compute_total_cases_new(i)
     count <- count + 1
@@ -391,9 +387,13 @@ compute_total_deaths_new = function(df){
   D_index <- 110
   print(dim(df))
   for (i in 1:num_groups) {
-    print(df[dim(df)[1], D_index])
-    deaths[i] <- df[dim(df)[1], D_index]
-    D_index <- D_index + 1
+    if (is.null(df[dim(df)[1], D_index])){
+      print(i)
+    }
+    else {
+      deaths[i] <- df[dim(df)[1], D_index]
+      D_index <- D_index + 1
+    }
   }
   tot_deaths <- sum(deaths)/pop_total * 100
 }
@@ -408,10 +408,15 @@ compute_total_cases_new = function(df){
   
   for (i in 1:num_groups) {
     # infections = total # recovered - initial recovered (seropositive)
-    infections[i] <- df[dim(df)[1], R_index] - df[1, R_index] +
-      df[dim(df)[1], Rv_index] - df[1, Rv_index] + 
-      df[dim(df)[1], Rx_index] - df[1, Rx_index] + 
-      df[dim(df)[1], D_index]
+    if (is.null(df[dim(df)[1], R_index]) || is.null(df[1, R_index]) || is.null(df[dim(df)[1], Rv_index]) || is.null(df[1, Rv_index]) || is.null(df[dim(df)[1], Rx_index]) || is.null(df[1, Rx_index]) || is.null(df[dim(df)[1], D_index])){
+      print(c(df[dim(df)[1], R_index], df[1, R_index], df[dim(df)[1], Rv_index], df[1, Rv_index],df[dim(df)[1], Rx_index], df[1, Rx_index],df[dim(df)[1], D_index]))
+    }
+    else {
+      infections[i] <- df[dim(df)[1], R_index] - df[1, R_index] +
+        df[dim(df)[1], Rv_index] - df[1, Rv_index] + 
+        df[dim(df)[1], Rx_index] - df[1, Rx_index] + 
+        df[dim(df)[1], D_index]
+    }
     R_index  <- R_index + 1
     Rv_index <- Rv_index + 1
     Rx_index <- Rx_index + 1
@@ -484,7 +489,7 @@ barplot_vax_strat = function(strategy){
   spc_groups <- c("1","2", "3", "4", "5", "6", "7", "8", "9")
   vax_proportion <- vax_proportion*100
   
-  df <- data.frame(age_groups, vax_proportion, age_demo)
+  df <- data.frame(groups, vax_proportion, spc_demo)
   
   # plot
   p <- ggplot(df, aes(x=spc_groups)) + 
