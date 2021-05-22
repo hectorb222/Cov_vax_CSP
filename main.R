@@ -50,7 +50,7 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 
 C <- as.matrix(read.csv(file = "C_FRA.csv")) # Counting matrix
 
-pop_total <- 66000000 # Country population (initial)
+pop_total <- 67000000 # Country population (initial)
 spc_demo <- c(0.005, 0.027, 0.083, 0.107, 0.105, 0.078, 0.1, 0.1, 0.1) # Vector containing the size of all the different SCP categories (% of pop)
 
 N_i <- pop_total*spc_demo # Vector containing the population per SCP categories
@@ -63,7 +63,7 @@ IFR <- IFR/100 # en %
 u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
 R0 <- compute_R0(u_var, C) # Computing of R0
 
-v_e <-  0.9 # Vaccine efficacy
+v_e <-  0.95 # Pfizer Covid-19 vaccine efficacy (ref. Israel observational study, 05/2021, Haas et al.)
 
 
 #####################################################################################################
@@ -90,16 +90,16 @@ list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_v
 # SPC9: "Etudiants"
 
 # Vaccine rollout speed
-num_per_day <- 10
+num_per_day <- 0.01
 
 # Simulation   per SCP
 for (i in seq(0, 2, by = 1)){
   j <- i/100
-  print(paste0("SIM ",i,"% of vaccines"))
+  print(paste0("SIM ",i,"% of population vaccinated"))
   list_all[[paste0(i)]] <- run_sim(C, j, "all", num_per_day, v_e)
   print("SIM STRAT ALL")
-  list_spc1[[paste0(i)]] <- run_sim(C, j, "SPC1", num_per_day, v_e)
-  print("SIM STRAT 1")
+  list_spc1[[paste0(i)]] <- run_sim(C, 1, "strategy A", num_per_day, v_e)
+  print("SIM STRAT A")
   list_spc2[[paste0(i)]] <- run_sim(C, j, "SPC2", num_per_day, v_e)
   print("SIM STRAT 2")
   list_spc3[[paste0(i)]] <- run_sim(C, j, "SPC3", num_per_day, v_e)
@@ -182,9 +182,8 @@ p9 <- barplot_vax_strat("SPC9") +
 p_all <- barplot_vax_strat("all") + 
   theme(axis.title.y = element_blank())
 
-plot_list <- c(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all)
 
-strategy_panel <- ggarrange(plotlist = plot_list,
+strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
                             nrow = 5, 
                             labels = c('A',  '', '', '', ''),
                             label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),

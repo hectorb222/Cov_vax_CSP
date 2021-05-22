@@ -25,8 +25,8 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   # specify group to vaccinate according to allocation strategy
   if (strategy == "all"){ 
     groups <- 1:9
-  } else if (strategy == "SPC1"){ 
-    groups <- 1
+  } else if (strategy == "strategy A"){ 
+    groups <- 1:4
   } else if (strategy == "SPC2") { 
     groups <- 2
   } else if (strategy == "SPC3") {
