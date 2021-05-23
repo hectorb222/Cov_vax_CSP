@@ -48,12 +48,18 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 # PARAMETERS #
 ##############
 
-# Counting matrix per scenario
-C1 <- as.matrix(read.csv(file = "C_FRA.csv")) # Scenario 1: total lockdown
-C2 <- as.matrix(read.csv(file = "C2.csv")) # Scenario 2: softer lockdown
-C3 <- as.matrix(read.csv(file = "C3.csv")) # Scenario 3: gradual lifting of lockdown
-C4 <- as.matrix(read.csv(file = "C4.csv")) # Scenario 4: only schools are closed
-C5 <- as.matrix(read.csv(file = "C5.csv")) # Scenario 5: no measures taken
+# Counting matrices
+C_work <- as.matrix(read.csv(file = "Matrices/Work.csv", header=FALSE))
+C_home <- as.matrix(read.csv(file = "Matrices/Home.csv", header=FALSE))   
+C_school <- as.matrix(read.csv(file = "Matrices/School.csv", header=FALSE)) 
+C_other <- as.matrix(read.csv(file = "Matrices/Others.csv", header=FALSE)) 
+
+# Scenarios
+S1 <- as.matrix(read.csv(file = "Matrices/S1.csv", header=FALSE))
+S2 <- as.matrix(read.csv(file = "Matrices/S2.csv", header=FALSE))
+S3 <- as.matrix(read.csv(file = "Matrices/S3.csv", header=FALSE))
+scenarii <- list(list(S1,1,0,0), list(S2,1,0.5,0), list(S3,1,0.7,0.4), list(diag(9),1,0,1), list(diag(9),1,1,1))
+
 
 pop_total <- 67000000 # Country population (initial)
 spc_demo <- c(0.007,0.034 , 0.103, 0.131, 0.13, 0.097, 0.0894, 0.3037, 0.1039) # Vector containing the size of all the different SCP categories (% of pop) (Tableau C)
@@ -105,25 +111,25 @@ list_all <- list_strat1 <- list_strat2 <- list_strat3 <- list_strat4 <- list_str
 # Vaccine rollout speed
 num_per_day <- 0.01
 
-# Simulation per strategy
-C = C1 # Chosen scenario
+# Simulation by strategy
+
 i = 0.3 # Number of vaccines to give (in % of population)
-print(paste0("SIM ",i,"% of population vaccinated"))
-list_all[[paste0(i)]] <- run_sim(C, i, "All", num_per_day, v_e)
-print("SIM STRAT ALL")
-list_strat1[[paste0(i)]] <- run_sim(C, i, "Elderly", num_per_day, v_e)
-print("SIM STRAT 1")
-list_strat2[[paste0(i)]] <- run_sim(C, i, "Economic players", num_per_day, v_e)
-print("SIM STRAT 2")
-list_strat3[[paste0(i)]] <- run_sim(C, i, "Essential workers", num_per_day, v_e)
-print("SIM STRAT 3")
-list_strat4[[paste0(i)]] <- run_sim(C, i, "No work-from-home", num_per_day, v_e)
-print("SIM STRAT 4")
-list_strat5[[paste0(i)]] <- run_sim(C, i, "Most contact", num_per_day, v_e)
-print("SIM STRAT 5")
 
+for (k in 1:5){
+  scenario <- scenarii[[k]] # Chosen scenario
+  C = scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other 
+  print(paste0("SIM ",k,"th scenario"))
+  
+  list_all[[paste0(k)]] <- run_sim(C, i, "All", num_per_day, v_e)
+  list_strat1[[paste0(k)]] <- run_sim(C, i, "Elderly", num_per_day, v_e)
+  list_strat2[[paste0(k)]] <- run_sim(C, i, "Economic players", num_per_day, v_e)
+  list_strat3[[paste0(k)]] <- run_sim(C, i, "Essential workers", num_per_day, v_e)
+  list_strat4[[paste0(k)]] <- run_sim(C, i, "No work-from-home", num_per_day, v_e)
+  list_strat5[[paste0(k)]] <- run_sim(C, i, "Most contact", num_per_day, v_e)
+}
 
-print("SIM DONE")
+df <- list(list_all, list_strat1, list_strat2, list_strat3, list_strat4, list_strat5)
+
 #####################################################################################################
 # STAT PANEL DISPLAY #
 ######################
