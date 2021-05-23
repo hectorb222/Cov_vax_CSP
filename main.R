@@ -48,7 +48,12 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 # PARAMETERS #
 ##############
 
-C <- as.matrix(read.csv(file = "C_FRA.csv")) # Counting matrix
+# Counting matrix per scenario
+C1 <- as.matrix(read.csv(file = "C1.csv")) # Scenario 1: total lockdown
+C2 <- as.matrix(read.csv(file = "C2.csv")) # Scenario 2: softer lockdown
+C3 <- as.matrix(read.csv(file = "C3.csv")) # Scenario 3: gradual lifting of lockdown
+C4 <- as.matrix(read.csv(file = "C4.csv")) # Scenario 4: only schools are closed
+C5 <- as.matrix(read.csv(file = "C5.csv")) # Scenario 5: no measures taken
 
 pop_total <- 67000000 # Country population (initial)
 spc_demo <- c(0.007,0.034 , 0.103, 0.131, 0.13, 0.097, 0.0894, 0.3037, 0.1039) # Vector containing the size of all the different SCP categories (% of pop) (Tableau C)
@@ -73,6 +78,16 @@ R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.95 # Pfizer Covid-19 vaccine efficacy (ref. Israel observational study, 05/2021, Haas et al.)
 
+# Socio-professional categories
+# SPC1: "Agriculteurs exploitants"
+# SPC2: "Artisans, commerçants, chefs d'entreprise"
+# SPC3: "Cadres et professions intellectuelles supérieures"
+# SPC4: "Professions intermédiaires"
+# SPC5: "Employés"
+# SPC6: "Ouvriers"
+# SPC7: "Sans Emploi"
+# SPC8: "Retraités"
+# SPC9: "Etudiants"
 
 #####################################################################################################
 # SIMULATION #
@@ -84,47 +99,28 @@ cores=detectCores()
 cl <- makeCluster(cores[1]-1)
 registerDoParallel(cl)
 
-# Different SCP categories
-list_all <- list_spc1 <- list_spc2 <- list_spc3 <- list_spc4 <- list_spc5 <- list_spc6 <- list_spc7 <- list_spc8 <- list_spc9 <- vector(mode = "list")
-list_all_var <- list_1_var <- list_2_var <- list_3_var <- list_4_var <- list_5_var <- list_6_var <- list_7_var <- list_8_var <- list_9_var <- vector(mode = "list")
-# SPC1: "Agriculteurs exploitants"
-# SPC2: "Artisans, commerçants, chefs d'entreprise"
-# SPC3: "Cadres et professions intellectuelles supérieures"
-# SPC4: "Professions intermédiaires"
-# SPC5: "Employés"
-# SPC6: "Ouvriers"
-# SPC7: "Sans Emploi"
-# SPC8: "Retraités"
-# SPC9: "Etudiants"
+# Different strategies
+list_all <- list_strat1 <- list_strat2 <- list_strat3 <- list_strat4 <- list_strat5 <- vector(mode = "list")
 
 # Vaccine rollout speed
 num_per_day <- 0.01
 
-# Simulation   per SCP
-for (i in seq(0, 2, by = 1)){
-  j <- i/100
-  print(paste0("SIM ",i,"% of population vaccinated"))
-  list_all[[paste0(i)]] <- run_sim(C, j, "all", num_per_day, v_e)
-  print("SIM STRAT ALL")
-  list_spc1[[paste0(i)]] <- run_sim(C, 1, "strategy A", num_per_day, v_e)
-  print("SIM STRAT A")
-  list_spc2[[paste0(i)]] <- run_sim(C, j, "SPC2", num_per_day, v_e)
-  print("SIM STRAT 2")
-  list_spc3[[paste0(i)]] <- run_sim(C, j, "SPC3", num_per_day, v_e)
-  print("SIM STRAT 3")
-  list_spc4[[paste0(i)]] <- run_sim(C, j, "SPC4", num_per_day, v_e)
-  print("SIM STRAT 4")
-  list_spc5[[paste0(i)]] <- run_sim(C, j, "SPC5", num_per_day, v_e)
-  print("SIM STRAT 5")
-  list_spc6[[paste0(i)]] <- run_sim(C, j, "SPC6", num_per_day, v_e)
-  print("SIM STRAT 6")
-  list_spc7[[paste0(i)]] <- run_sim(C, j, "SPC7", num_per_day, v_e)
-  print("SIM STRAT 7")
-  list_spc8[[paste0(i)]] <- run_sim(C, j, "SPC8", num_per_day, v_e)
-  print("SIM STRAT 8")
-  list_spc9[[paste0(i)]] <- run_sim(C, j, "SPC9", num_per_day, v_e)
-  print("SIM STRAT 9")
-}
+# Simulation per strategy
+i = 0.3 # Number of vaccines to give (in % of population)
+print(paste0("SIM ",i,"% of population vaccinated"))
+list_all[[paste0(i)]] <- run_sim(C, i, "All", num_per_day, v_e)
+print("SIM STRAT ALL")
+list_strat1[[paste0(i)]] <- run_sim(C, i, "Elderly", num_per_day, v_e)
+print("SIM STRAT 1")
+list_strat2[[paste0(i)]] <- run_sim(C, i, "Economic players", num_per_day, v_e)
+print("SIM STRAT 2")
+list_strat3[[paste0(i)]] <- run_sim(C, i, "Essential workers", num_per_day, v_e)
+print("SIM STRAT 3")
+list_strat4[[paste0(i)]] <- run_sim(C, i, "No work-from-home", num_per_day, v_e)
+print("SIM STRAT 4")
+list_strat5[[paste0(i)]] <- run_sim(C, i, "Most contact", num_per_day, v_e)
+print("SIM STRAT 5")
+
 
 print("SIM DONE")
 #####################################################################################################
@@ -132,77 +128,77 @@ print("SIM DONE")
 ######################
 
 
-# Plotting of death and cases graphs
-p_mort <- plot_over_vax_avail_new("deaths", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
-p_infect <- plot_over_vax_avail_new("cases", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
-
-print("DEATHS AND CASES PLOTED")
-
-fig1_plots <- list(p_mort, p_infect)
-
-stopCluster(cl) # End of parallel computing 
-proc.time() - ptm # Time the program spent running unitl now
-
-# Graphic plotting
-mort_1 <- fig1_plots[[1]][[1]] + 
-  onlyy_theme + 
-  theme(plot.margin=unit(c(0.25,0.25,0.25,0.25), "cm"))
-mort_2 <- fig1_plots[[2]][[1]] + 
-  nolabels_theme
-
-infect_1 <- fig1_plots[[1]][[2]]  + 
-  theme(axis.title.x = element_blank())
-infect_2 <- fig1_plots[[2]][[2]] + 
-  onlyx_theme + 
-  theme(axis.title.x = element_blank())
-
-# Panel config
-print("SETTING UP PANEL...")
-panel <- ggarrange(mort_1, mort_2, infect_1, infect_2,
-                   nrow = 2,
-                   labels = c('B', 'C', 'D', 'E'),
-                   label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
-                                     hjust=0, vjust = 1.1),
-                   bottom = textGrob("Total vaccine supply (% of population)", gp = gpar(fontsize = 12), 
-                                     vjust = 0.3, hjust = 0.36),
-                   padding = unit(0.5, "line"))
-
-print("CREATING BAR PLOT...")
-p1 <- barplot_vax_strat("SPC1") + 
-  theme(axis.title.y = element_blank())
-#ylab("Distribution\nof vaccines (%)")
-p2 <- barplot_vax_strat("SPC2") + 
-  theme(axis.title.y = element_blank())
-p3 <- barplot_vax_strat("SPC3") + 
-  theme(axis.title.y = element_blank())
-p4 <- barplot_vax_strat("SPC4") + 
-  theme(axis.title.y = element_blank())
-p5 <- barplot_vax_strat("SPC5") + 
-  theme(axis.title.y = element_blank())
-p6 <- barplot_vax_strat("SPC6") + 
-  theme(axis.title.y = element_blank())
-p7 <- barplot_vax_strat("SPC7") + 
-  theme(axis.title.y = element_blank())
-p8 <- barplot_vax_strat("SPC8") + 
-  theme(axis.title.y = element_blank())
-p9 <- barplot_vax_strat("SPC9") + 
-  theme(axis.title.y = element_blank())
-p_all <- barplot_vax_strat("all") + 
-  theme(axis.title.y = element_blank())
-
-
-strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
-                            nrow = 5, 
-                            labels = c('A',  '', '', '', ''),
-                            label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
-                                              hjust=1.8, vjust = 1.1),
-                            left = textGrob("Distribution of vaccines (%)", rot = 90, hjust = 0.5),
-                            bottom = textGrob("SCP", vjust = 0))
-# export as pdf 9.5x4"
-grid.arrange(strategy_panel, panel,
-             ncol = 2, widths = c(2, 7.5),
-             padding = unit(1, "line"))
-
-print("DONE!")
+# # Plotting of death and cases graphs
+# p_mort <- plot_over_vax_avail_new("deaths", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
+# p_infect <- plot_over_vax_avail_new("cases", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
+# 
+# print("DEATHS AND CASES PLOTED")
+# 
+# fig1_plots <- list(p_mort, p_infect)
+# 
+# stopCluster(cl) # End of parallel computing 
+# proc.time() - ptm # Time the program spent running unitl now
+# 
+# # Graphic plotting
+# mort_1 <- fig1_plots[[1]][[1]] + 
+#   onlyy_theme + 
+#   theme(plot.margin=unit(c(0.25,0.25,0.25,0.25), "cm"))
+# mort_2 <- fig1_plots[[2]][[1]] + 
+#   nolabels_theme
+# 
+# infect_1 <- fig1_plots[[1]][[2]]  + 
+#   theme(axis.title.x = element_blank())
+# infect_2 <- fig1_plots[[2]][[2]] + 
+#   onlyx_theme + 
+#   theme(axis.title.x = element_blank())
+# 
+# # Panel config
+# print("SETTING UP PANEL...")
+# panel <- ggarrange(mort_1, mort_2, infect_1, infect_2,
+#                    nrow = 2,
+#                    labels = c('B', 'C', 'D', 'E'),
+#                    label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
+#                                      hjust=0, vjust = 1.1),
+#                    bottom = textGrob("Total vaccine supply (% of population)", gp = gpar(fontsize = 12), 
+#                                      vjust = 0.3, hjust = 0.36),
+#                    padding = unit(0.5, "line"))
+# 
+# print("CREATING BAR PLOT...")
+# p1 <- barplot_vax_strat("SPC1") + 
+#   theme(axis.title.y = element_blank())
+# #ylab("Distribution\nof vaccines (%)")
+# p2 <- barplot_vax_strat("SPC2") + 
+#   theme(axis.title.y = element_blank())
+# p3 <- barplot_vax_strat("SPC3") + 
+#   theme(axis.title.y = element_blank())
+# p4 <- barplot_vax_strat("SPC4") + 
+#   theme(axis.title.y = element_blank())
+# p5 <- barplot_vax_strat("SPC5") + 
+#   theme(axis.title.y = element_blank())
+# p6 <- barplot_vax_strat("SPC6") + 
+#   theme(axis.title.y = element_blank())
+# p7 <- barplot_vax_strat("SPC7") + 
+#   theme(axis.title.y = element_blank())
+# p8 <- barplot_vax_strat("SPC8") + 
+#   theme(axis.title.y = element_blank())
+# p9 <- barplot_vax_strat("SPC9") + 
+#   theme(axis.title.y = element_blank())
+# p_all <- barplot_vax_strat("all") + 
+#   theme(axis.title.y = element_blank())
+# 
+# 
+# strategy_panel <- ggarrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p_all,
+#                             nrow = 5, 
+#                             labels = c('A',  '', '', '', ''),
+#                             label.args = list(gp = grid::gpar(fontsize=12, fontface = "bold"),
+#                                               hjust=1.8, vjust = 1.1),
+#                             left = textGrob("Distribution of vaccines (%)", rot = 90, hjust = 0.5),
+#                             bottom = textGrob("SCP", vjust = 0))
+# # export as pdf 9.5x4"
+# grid.arrange(strategy_panel, panel,
+#              ncol = 2, widths = c(2, 7.5),
+#              padding = unit(1, "line"))
+# 
+# print("DONE!")
 
 

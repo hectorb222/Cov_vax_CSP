@@ -6,43 +6,33 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   # Vaccine rollout is continuous at 1% of total pop/day until all vaccines are distributed
   # The incorporation of a serological test can be included by using known sensitivity se and specificity sp,
   #  or can be excluded by setting se = 0 and sp = 1 (a convenient mathematical representation of the no-test scenario is simply a test that always returns a negative result)
+  
   # Disease Tranmission
   d_E <- 1/3 # incubation period (E -> I), ref: Davies
   d_I <- 1/5 # recovery period (I -> R), ref: Davies
   
-  E_0 <- Ev_0 <- Ex_0 <- Sv_0 <- Sx_0 <- Iv_0 <- Ix_0 <- Rv_0 <- Rx_0 <- D_0 <- rep(0, num_groups)
+  E_0 <- Ev_0 <- Ex_0 <- Sv_0 <- Iv_0 <- Ix_0 <- Rv_0 <- Rx_0 <- D_0 <- rep(0, num_groups)
   R_0 <- rep(0, num_groups)
   
-  if (num_perday == 1){
-    I_0 <- rep(1, num_groups)
-  } else {
-    I_0 <- N_i*0.005 # 0.5% of each age group
-  }
+  Sx_0 <- N_i*0.15 # Proportion of antivaxers
+  I_0 <- N_i*0.005 # 0.5% of each age group
   
   S_0 <- N_i - I_0 - R_0
 
   
   # specify group to vaccinate according to allocation strategy
-  if (strategy == "all"){ 
+  if (strategy == "All"){ 
     groups <- 1:9
-  } else if (strategy == "strategy A"){ 
-    groups <- 1:4
-  } else if (strategy == "SPC2") { 
-    groups <- 2
-  } else if (strategy == "SPC3") {
-    groups <- 3
-  } else if (strategy == "SPC4") {
-    groups <- 4
-  } else if (strategy == "SPC5"){ 
-    groups <- 5
-  } else if (strategy == "SPC6") { 
-    groups <- 6
-  } else if (strategy == "SPC7") {
-    groups <- 7
-  } else if (strategy == "SPC8") {
-    groups <- 8
-  } else if (strategy == "SPC9") {
+  } else if (strategy == "Elderly"){ 
     groups <- 9
+  } else if (strategy == "Economic players") { 
+    groups <- c(1, 2, 3, 5, 6)
+  } else if (strategy == "Essential workers") {
+    groups <- c(1, 4, 6)
+  } else if (strategy == "No work-from-home") {
+    groups <- c(1, 2, 6)
+  } else if (strategy == "Most contact"){ 
+    groups <- c(2, 3, 4, 9)
   }
   people_to_vax <- sum(S_0[groups] + E_0[groups] + R_0[groups])
 
