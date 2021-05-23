@@ -49,7 +49,7 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 ##############
 
 # Counting matrix per scenario
-C1 <- as.matrix(read.csv(file = "C1.csv")) # Scenario 1: total lockdown
+C1 <- as.matrix(read.csv(file = "C_FRA.csv")) # Scenario 1: total lockdown
 C2 <- as.matrix(read.csv(file = "C2.csv")) # Scenario 2: softer lockdown
 C3 <- as.matrix(read.csv(file = "C3.csv")) # Scenario 3: gradual lifting of lockdown
 C4 <- as.matrix(read.csv(file = "C4.csv")) # Scenario 4: only schools are closed
@@ -106,6 +106,7 @@ list_all <- list_strat1 <- list_strat2 <- list_strat3 <- list_strat4 <- list_str
 num_per_day <- 0.01
 
 # Simulation per strategy
+C = C1 # Chosen scenario
 i = 0.3 # Number of vaccines to give (in % of population)
 print(paste0("SIM ",i,"% of population vaccinated"))
 list_all[[paste0(i)]] <- run_sim(C, i, "All", num_per_day, v_e)
@@ -200,5 +201,3 @@ print("SIM DONE")
 #              padding = unit(1, "line"))
 # 
 # print("DONE!")
-
-
