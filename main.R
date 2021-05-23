@@ -51,16 +51,24 @@ onlyy_theme <- theme(axis.title.x = element_blank(),
 C <- as.matrix(read.csv(file = "C_FRA.csv")) # Counting matrix
 
 pop_total <- 67000000 # Country population (initial)
-spc_demo <- c(0.005, 0.027, 0.083, 0.107, 0.105, 0.078, 0.1, 0.1, 0.1) # Vector containing the size of all the different SCP categories (% of pop)
+spc_demo <- c(0.007,0.034 , 0.103, 0.131, 0.13, 0.097, 0.0894, 0.3037, 0.1039) # Vector containing the size of all the different SCP categories (% of pop) (Tableau C)
 
 N_i <- pop_total*spc_demo # Vector containing the population per SCP categories
 num_groups <- length(spc_demo) # Number of SCPs chosen
 
-IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01, 
-         4.042049e-01, 1.355495e-01, 4.545632e+00, 1.524371e-2) # IFR per CSP
+
+IFR <- c(3.594256e-02, 3.594256e-02, 3.594256e-02, 3.594256e-02, 3.594256e-02, 
+         3.594256e-02, 3.594256e-02, 4.545632e+00, 3.196070e-02) # IFR per CSP
+
+#IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01, 
+         # 4.042049e-01, 1.355495e-01, 4.545632e+00, 1.524371e-2) # IFR per ages
+
 IFR <- IFR/100 # en %
 
-u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per CSP
+u <- c(0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.74, 0.68)/(39.80957/2) # Susceptibility per CSP
+
+# u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per ages
+
 R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.95 # Pfizer Covid-19 vaccine efficacy (ref. Israel observational study, 05/2021, Haas et al.)
