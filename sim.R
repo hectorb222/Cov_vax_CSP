@@ -14,7 +14,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   E_0 <- Ev_0 <- Ex_0 <- Sv_0 <- Iv_0 <- Ix_0 <- Rv_0 <- Rx_0 <- D_0 <- rep(0, num_groups)
   R_0 <- rep(0, num_groups)
   
-  Sx_0 <- N_i*0.15 # Proportion of antivaxers
+  Sx_0 <- N_i*0.11 # Proportion of "antivaxers" (ref. Sondage ELAB BFMTV)
   I_0 <- N_i*0.005 # 0.5% of each age group
   
   S_0 <- N_i - I_0 - R_0
@@ -24,7 +24,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   if (strategy == "All"){ 
     groups <- 1:9
   } else if (strategy == "Elderly"){ 
-    groups <- 9
+    groups <- 8
   } else if (strategy == "Economic players") { 
     groups <- c(1, 2, 3, 5, 6)
   } else if (strategy == "Essential workers") {

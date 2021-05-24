@@ -109,11 +109,11 @@ registerDoParallel(cl)
 list_all <- list_strat1 <- list_strat2 <- list_strat3 <- list_strat4 <- list_strat5 <- vector(mode = "list")
 
 # Vaccine rollout speed
-num_per_day <- 0.01
+num_per_day <- 500000/pop_total # (on average 500,000 people vaccinated per day in France in May 2021)
 
 # Simulation by strategy
 
-i = 0.3 # Number of vaccines to give (in % of population)
+i = 0.9 # Number of vaccines to give (proportion of population)
 
 for (k in 1:5){
   scenario <- scenarii[[k]] # Chosen scenario
