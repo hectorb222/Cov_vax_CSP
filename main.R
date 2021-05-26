@@ -12,37 +12,6 @@ library(grid)
 source("sim.R")
 source("outils.R")
 
-#######################################################################################################
-# GRAPH THEMES #
-################
-
-# ColorBrewer Dark2
-col_1 = "#1B9E77" # teal green
-col_all = "#D95F02" # orange
-col_2 = "#7570B3" # purple 
-col_3 = "#E7298A" # magenta
-col_4 = "#66A61E" # light green 
-col_5 = "#1B9E76"
-col_6 = "#D95F01" 
-col_7 = "#7570B8"
-col_8 = "#E7298A" 
-col_9 = "#61A61E" 
-
-nolabels_theme <- theme(axis.title.x =element_blank(),
-                        axis.text.x = element_blank(),
-                        axis.title.y = element_blank(),
-                        axis.text.y = element_blank(),
-                        plot.title = element_text(size = 12, face = "plain"),
-                        legend.position = "none")
-onlyx_theme <- theme(axis.title.y = element_blank(),
-                     axis.text.y = element_blank(),
-                     plot.title = element_text(size = 12, face = "plain"),
-                     legend.position = "none")
-onlyy_theme <- theme(axis.title.x = element_blank(),
-                     axis.text.x = element_blank(),
-                     plot.title = element_text(size = 12, face = "plain"),
-                     legend.position = "none")
-
 
 #######################################################################################################
 # PARAMETERS #
@@ -80,20 +49,9 @@ u <- c(0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.74, 0.68)/(39.80957/2) # Susc
 
 # u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per ages
 
-R0 <- compute_R0(u_var, C) # Computing of R0
+#R0 <- compute_R0(u_var, C) # Computing of R0
 
 v_e <-  0.95 # Pfizer Covid-19 vaccine efficacy (ref. Israel observational study, 05/2021, Haas et al.)
-
-# Socio-professional categories
-# SPC1: "Agriculteurs exploitants"
-# SPC2: "Artisans, commerçants, chefs d'entreprise"
-# SPC3: "Cadres et professions intellectuelles supérieures"
-# SPC4: "Professions intermédiaires"
-# SPC5: "Employés"
-# SPC6: "Ouvriers"
-# SPC7: "Sans Emploi"
-# SPC8: "Retraités"
-# SPC9: "Etudiants"
 
 #####################################################################################################
 # SIMULATION #
@@ -119,7 +77,7 @@ for (k in 1:5){
   scenario <- scenarii[[k]] # Chosen scenario
   C = scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other 
   print(paste0("SIM ",k,"th scenario"))
-  
+
   list_all[[paste0(k)]] <- run_sim(C, i, "All", num_per_day, v_e)
   list_strat1[[paste0(k)]] <- run_sim(C, i, "Elderly", num_per_day, v_e)
   list_strat2[[paste0(k)]] <- run_sim(C, i, "Economic players", num_per_day, v_e)
@@ -130,11 +88,43 @@ for (k in 1:5){
 
 df <- list(list_all, list_strat1, list_strat2, list_strat3, list_strat4, list_strat5)
 
+#######################################################################################################
+# GRAPH THEMES #
+################
+# 
+# # ColorBrewer Dark2
+# col_1 = "#1B9E77" # teal green
+# col_all = "#D95F02" # orange
+# col_2 = "#7570B3" # purple 
+# col_3 = "#E7298A" # magenta
+# col_4 = "#66A61E" # light green 
+# col_5 = "#1B9E76"
+# col_6 = "#D95F01" 
+# col_7 = "#7570B8"
+# col_8 = "#E7298A" 
+# col_9 = "#61A61E" 
+# 
+# nolabels_theme <- theme(axis.title.x =element_blank(),
+#                         axis.text.x = element_blank(),
+#                         axis.title.y = element_blank(),
+#                         axis.text.y = element_blank(),
+#                         plot.title = element_text(size = 12, face = "plain"),
+#                         legend.position = "none")
+# onlyx_theme <- theme(axis.title.y = element_blank(),
+#                      axis.text.y = element_blank(),
+#                      plot.title = element_text(size = 12, face = "plain"),
+#                      legend.position = "none")
+# onlyy_theme <- theme(axis.title.x = element_blank(),
+#                      axis.text.x = element_blank(),
+#                      plot.title = element_text(size = 12, face = "plain"),
+#                      legend.position = "none")
+# 
+#
 #####################################################################################################
 # STAT PANEL DISPLAY #
 ######################
-
-
+#
+#
 # # Plotting of death and cases graphs
 # p_mort <- plot_over_vax_avail_new("deaths", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 
 # p_infect <- plot_over_vax_avail_new("cases", "None", list_all, list_spc1, list_spc2, list_spc3, list_spc4, list_spc5, list_spc6, list_spc7, list_spc8, list_spc9) 

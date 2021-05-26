@@ -19,6 +19,16 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   
   S_0 <- N_i - I_0 - Sx_0
 
+  # Socio-professional categories
+  # SPC1: "Agriculteurs exploitants"
+  # SPC2: "Artisans, commerçants, chefs d'entreprise"
+  # SPC3: "Cadres et professions intellectuelles supérieures"
+  # SPC4: "Professions intermédiaires"
+  # SPC5: "Employés"
+  # SPC6: "Ouvriers"
+  # SPC7: "Sans Emploi"
+  # SPC8: "Retraités"
+  # SPC9: "Etudiants"
   
   # specify group to vaccinate according to allocation strategy
   if (strategy == "All"){ 
