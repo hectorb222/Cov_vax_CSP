@@ -17,7 +17,7 @@ run_sim = function(C, percent_vax, strategy, num_perday, v_e, sp = 1, se = 0, sy
   Sx_0 <- N_i*0.11 # Proportion of "antivaxers" (ref. Sondage ELAB BFMTV)
   I_0 <- N_i*0.005 # 0.5% of each age group
   
-  S_0 <- N_i - I_0 - R_0
+  S_0 <- N_i - I_0 - Sx_0
 
   
   # specify group to vaccinate according to allocation strategy

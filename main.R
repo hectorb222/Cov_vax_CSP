@@ -113,7 +113,7 @@ num_per_day <- 500000/pop_total # (on average 500,000 people vaccinated per day 
 
 # Simulation by strategy
 
-i = 0.9 # Number of vaccines to give (proportion of population)
+i = 0.85 # Number of vaccines to give (proportion of population)
 
 for (k in 1:5){
   scenario <- scenarii[[k]] # Chosen scenario
