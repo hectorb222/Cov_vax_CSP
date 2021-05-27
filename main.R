@@ -75,7 +75,7 @@ i = 0.85 # Number of vaccines to give (proportion of population)
 
 for (k in 1:5){
   scenario <- scenarii[[k]] # Chosen scenario
-  C = scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other 
+  C = 0.33*(scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other)
   print(paste0("SIM ",k,"th scenario"))
 
   list_all[[paste0(k)]] <- run_sim(C, i, "All", num_per_day, v_e)
@@ -87,6 +87,14 @@ for (k in 1:5){
 }
 
 df <- list(list_all, list_strat1, list_strat2, list_strat3, list_strat4, list_strat5)
+
+d <- 0
+for (i in 1:9){
+  k <- paste0("D",i)
+  d<- d + df[[2]][["3"]][[k]][[365]]
+}
+
+print(d)
 
 #######################################################################################################
 # GRAPH THEMES #
