@@ -36,18 +36,15 @@ spc_demo <- c(0.007,0.034 , 0.103, 0.131, 0.13, 0.097, 0.0894, 0.3037, 0.1039) #
 N_i <- pop_total*spc_demo # Vector containing the population per SCP categories
 num_groups <- length(spc_demo) # Number of SCPs chosen
 
-
 IFR <- c(3.594256e-02, 3.594256e-02, 3.594256e-02, 3.594256e-02, 3.594256e-02, 
-         3.594256e-02, 3.594256e-02, 4.545632e+00, 3.196070e-02) # IFR per CSP
-
-#IFR <- c(9.530595e-01, 3.196070e-02, 1.071797e-01, 3.594256e-02, 1.205328e-01, 
-         # 4.042049e-01, 1.355495e-01, 4.545632e+00, 1.524371e-2) # IFR per ages
-
+         3.594256e-02, 3.594256e-02, 4.545632e+00, 3.196070e-02) # IFR by SPC
+#IFR <- c(9.530595e-04, 3.196070e-03, 1.071797e-02, 3.594256e-02, 1.205328e-01, 
+#         4.042049e-01, 1.355495e+00, 4.545632e+00, 1.524371e+01) # IFR by age
 IFR <- IFR/100 # en %
 
-u <- c(0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.86, 0.74, 0.68)/(39.80957/2) # Susceptibility per CSP
-
-# u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility per ages
+u <- c(0.04320569, 0.04320569, 0.04320569, 0.04320569, 0.04320569, 0.04320569, 
+       0.04320569, 0.03717699,0.03416264) # Susceptibility by SPC
+# u <- c(0.8, 0.68, 0.79, 0.86, 0.8, 0.82, 0.88, 0.74, 0.74)/(39.80957/2) # Susceptibility by age
 
 #R0 <- compute_R0(u_var, C) # Computing of R0
 
@@ -75,7 +72,7 @@ i = 0.85 # Number of vaccines to give (proportion of population)
 
 for (k in 1:5){
   scenario <- scenarii[[k]] # Chosen scenario
-  C = 0.33*(scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other)
+  C = (scenario[[1]] %*% C_work + scenario[[2]]*C_home + scenario[[3]]*C_school + scenario[[4]]*C_other)
   print(paste0("SIM ",k,"th scenario"))
 
   list_all[[paste0(k)]] <- run_sim(C, i, "All", num_per_day, v_e)
@@ -88,11 +85,12 @@ for (k in 1:5){
 
 df <- list(list_all, list_strat1, list_strat2, list_strat3, list_strat4, list_strat5)
 
-d <- 0
-for (i in 1:9){
-  k <- paste0("D",i)
-  d<- d + df[[2]][["3"]][[k]][[365]]
-}
+for (j in 1:4)
+  d <- 0
+  for (i in 1:9){
+    k <- paste0("D",i)
+    d<- d + df[[2]][["3"]][[k]][[365]]
+  }
 
 print(d)
 
