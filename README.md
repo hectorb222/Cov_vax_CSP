@@ -1,1 +1,1 @@
-# Cov_vax_CSP
+# Covid-19 vaccination strategy by socio-professional category
